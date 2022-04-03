@@ -26,8 +26,9 @@ public class main {
           System.out.println("You have selected 2");
           // need to change above
         } else if (nextAct == '1') {
-          System.out.println("You have selected 1");
-          // need to change above
+          // System.out.println("You have selected 1");
+          Admin admin = new Admin();
+          admin.run();
         } else {
           System.out.println("[Error]: Invalid selection. Please select between 1 and 4!");
         }
