@@ -1,22 +1,22 @@
 import java.util.*;
 import java.sql.*;
 
-public class Admin {
+public class admin {
   private String jdbcDriver = "com.mysql.jdbc.Driver";
   private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
   private String userName = "Group25";
   private String password = "CSCI3170";
 
-  public Admin() {
+  public admin() {
   }
 
   public int run() {
     Boolean exit = false;
     while (!exit) {
-      System.out.println("-----Operations for adminstrator menu-----");
+      System.out.println("-----Operations for administrator menu-----");
       System.out.println("What kind of operations would you like to perform?");
       System.out.println("1. Create all tables");
-      System.out.println("2. Delete all table");
+      System.out.println("2. Delete all tables");
       System.out.println("3. Load from datafile");
       System.out.println("4. Show number of records in each table");
       System.out.println("5. Return to the main menu");
@@ -30,10 +30,10 @@ public class Admin {
           continue;
         } else if (nextAct == '4') {
           System.out.println("You have selected 4");
-          // need to change above
+          // TODO need to change above
         } else if (nextAct == '3') {
           System.out.println("You have selected 3");
-          // need to change above
+          // TODO need to change above
         } else if (nextAct == '2') {
           this.dropTable();
         } else if (nextAct == '1') {
@@ -50,6 +50,7 @@ public class Admin {
 
   public void createTable() {
     try {
+      System.out.print("Processing...");
       Class.forName(jdbcDriver);
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
@@ -105,7 +106,7 @@ public class Admin {
           "PRIMARY KEY (callnum, cname), " +
           "FOREIGN KEY (callnum) REFERENCES car(callnum) ON UPDATE CASCADE ON DELETE CASCADE)";
       stmt.executeUpdate(sql);
-      System.out.println("...Done. Database is initialized");
+      System.out.println("Done. Database is initialized.");
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     } catch (SQLException e) {
@@ -115,6 +116,7 @@ public class Admin {
 
   public void dropTable() {
     try {
+      System.out.print("Processing...");
       Class.forName(jdbcDriver);
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
@@ -132,7 +134,7 @@ public class Admin {
       stmt.executeUpdate(sql);
       sql = "DROP TABLE IF EXISTS user_category";
       stmt.executeUpdate(sql);
-      System.out.println("...Done. Database is removed");
+      System.out.println("Done. Database is removed.");
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     } catch (SQLException e) {

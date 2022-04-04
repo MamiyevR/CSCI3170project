@@ -21,13 +21,13 @@ public class main {
           continue;
         } else if (nextAct == '3') {
           System.out.println("You have selected 3");
-          // need to change above
+          // TODO need to change above
         } else if (nextAct == '2') {
           System.out.println("You have selected 2");
-          // need to change above
+          // TODO need to change above
         } else if (nextAct == '1') {
           // System.out.println("You have selected 1");
-          Admin admin = new Admin();
+          admin admin = new admin();
           admin.run();
         } else {
           System.out.println("[Error]: Invalid selection. Please select between 1 and 4!");
