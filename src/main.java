@@ -20,8 +20,8 @@ public class main {
           exit = true;
           continue;
         } else if (nextAct == '3') {
-          System.out.println("You have selected 3");
-          // TODO need to change above
+          manager mgr = new manager();
+          mgr.run();
         } else if (nextAct == '2') {
           System.out.println("You have selected 2");
           // TODO need to change above
