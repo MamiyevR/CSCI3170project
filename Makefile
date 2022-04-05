@@ -1,6 +1,6 @@
 target:
 	javac ./src/*.java -d ./class -classpath ./class
 run:
-	java -cp ./class main
+	java -cp .:connector.jar ./class main
 clean:
 	rm -rf ./class/*.class
