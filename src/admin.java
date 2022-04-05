@@ -1,5 +1,6 @@
 import java.util.*;
 import java.sql.*;
+import java.io.*;
 
 public class Admin {
   private String jdbcDriver = "com.mysql.jdbc.Driver";
@@ -29,10 +30,10 @@ public class Admin {
           exit = true;
           continue;
         } else if (nextAct == '4') {
-          System.out.println("You have selected 4");
+          this.numOfRecords();
           // need to change above
         } else if (nextAct == '3') {
-          System.out.println("You have selected 3");
+          this.loadTable(input);
           // need to change above
         } else if (nextAct == '2') {
           this.dropTable();
@@ -94,7 +95,7 @@ public class Admin {
           "copynum DECIMAL(1) UNSIGNED, " +
           "checkout DATE, " +
           "return_date DATE, " +
-          "PRIMARY KEY (checkout, uid, callnum, copynum), " +
+          "PRIMARY KEY (uid, callnum, copynum, checkout), " +
           "FOREIGN KEY (uid) REFERENCES user(uid) ON UPDATE CASCADE ON DELETE CASCADE, " +
           "FOREIGN KEY (callnum) REFERENCES car(callnum) ON UPDATE CASCADE ON DELETE CASCADE, " +
           "FOREIGN KEY (copynum) REFERENCES copy(copynum) ON UPDATE CASCADE ON DELETE CASCADE)";
@@ -107,9 +108,11 @@ public class Admin {
       stmt.executeUpdate(sql);
       System.out.println("...Done. Database is initialized");
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      System.out.printf("[Error]: %s\n", e.getMessage());
     } catch (SQLException e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      System.out.println("[Error]: server cannot connect to database");
     }
   }
 
@@ -118,25 +121,141 @@ public class Admin {
       Class.forName(jdbcDriver);
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
-      String sql = "DROP TABLE IF EXISTS produce";
-      stmt.executeUpdate(sql);
-      sql = "DROP TABLE IF EXISTS rent";
-      stmt.executeUpdate(sql);
-      sql = "DROP TABLE IF EXISTS copy";
-      stmt.executeUpdate(sql);
-      sql = "DROP TABLE IF EXISTS car";
-      stmt.executeUpdate(sql);
-      sql = "DROP TABLE IF EXISTS car_category";
-      stmt.executeUpdate(sql);
-      sql = "DROP TABLE IF EXISTS user";
-      stmt.executeUpdate(sql);
-      sql = "DROP TABLE IF EXISTS user_category";
-      stmt.executeUpdate(sql);
+      String sql;
+      String[] tables = { "produce", "rent", "copy", "car", "car_category", "user", "user_category" };
+
+      for (String s : tables) {
+        sql = String.format("DROP TABLE IF EXISTS %s", s);
+        stmt.executeUpdate(sql);
+      }
       System.out.println("...Done. Database is removed");
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      System.out.printf("[Error]: %s\n", e.getMessage());
     } catch (SQLException e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      System.out.println("[Error]: server cannot connect to database");
+    }
+  }
+
+  public void loadTable(Scanner input) {
+    try {
+      Class.forName(jdbcDriver);
+      Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+      Statement stmt = conn.createStatement();
+      String sql;
+      System.out.printf("Type in the Source Data Folder Path: ");
+      String inputString = input.next();
+
+      File tempFile = new File(inputString + "/car_category.txt");
+      Scanner reader = new Scanner(tempFile);
+      while (reader.hasNextLine()) {
+        String data = reader.nextLine();
+        String[] datas = data.split("\t");
+        sql = String.format("INSERT IGNORE INTO car_category(ccid, ccname) VALUES (%d, \"%s\")",
+            Integer.parseInt(datas[0]), datas[1]);
+        stmt.executeUpdate(sql);
+      }
+      reader.close();
+
+      tempFile = new File(inputString + "/user_category.txt");
+      reader = new Scanner(tempFile);
+      while (reader.hasNextLine()) {
+        String data = reader.nextLine();
+        String[] datas = data.split("\t");
+        sql = String.format("INSERT IGNORE INTO user_category(ucid, max, period) VALUES (%d, %d, %d)",
+            Integer.parseInt(datas[0]), Integer.parseInt(datas[1]), Integer.parseInt(datas[2]));
+        stmt.executeUpdate(sql);
+      }
+      reader.close();
+
+      tempFile = new File(inputString + "/user.txt");
+      reader = new Scanner(tempFile);
+      while (reader.hasNextLine()) {
+        String data = reader.nextLine();
+        String[] datas = data.split("\t");
+        sql = String.format("INSERT IGNORE INTO user(uid, name, age, occupation, ucid)" +
+            "VALUES (\"%s\", \"%s\", %d, \"%s\", %d)",
+            datas[0], datas[1], Integer.parseInt(datas[2]), datas[3], Integer.parseInt(datas[4]));
+        stmt.executeUpdate(sql);
+      }
+      reader.close();
+
+      tempFile = new File(inputString + "/car.txt");
+      reader = new Scanner(tempFile);
+      while (reader.hasNextLine()) {
+        String data = reader.nextLine();
+        String[] datas = data.split("\t");
+        sql = String.format("INSERT IGNORE INTO car(callnum, name, manufacture, time_rent, ccid)" +
+            "VALUES (\"%s\", \"%s\", \"%s\", %d, %d)",
+            datas[0], datas[2], datas[4], Integer.parseInt(datas[5]), Integer.parseInt(datas[6]));
+        stmt.executeUpdate(sql);
+
+        sql = String.format("INSERT IGNORE INTO produce(callnum, cname)" +
+            "VALUES (\"%s\", \"%s\")", datas[0], datas[3]);
+        stmt.executeUpdate(sql);
+
+        sql = String.format("INSERT IGNORE INTO copy(callnum, copynum)" +
+            "VALUES (\"%s\", %d)", datas[0], Integer.parseInt(datas[1]));
+        stmt.executeUpdate(sql);
+      }
+      reader.close();
+
+      tempFile = new File(inputString + "/rent.txt");
+      reader = new Scanner(tempFile);
+      while (reader.hasNextLine()) {
+        String data = reader.nextLine();
+        String[] datas = data.split("\t");
+        if (datas[4].equals("NULL")) {
+          sql = String.format("INSERT IGNORE INTO rent(uid, callnum, copynum, checkout, return_date)" +
+              "VALUES (\"%s\", \"%s\", %d, \"%s\", %s)",
+              datas[2], datas[0], Integer.parseInt(datas[1]), datas[3], datas[4]);
+        } else {
+          sql = String.format("INSERT IGNORE INTO rent(uid, callnum, copynum, checkout, return_date)" +
+              "VALUES (\"%s\", \"%s\", %d, \"%s\", \"%s\")",
+              datas[2], datas[0], Integer.parseInt(datas[1]), datas[3], datas[4]);
+        }
+        stmt.executeUpdate(sql);
+      }
+      reader.close();
+      System.out.println("...Done. Data is inputted to the database");
+    } catch (ClassNotFoundException e) {
+      // e.printStackTrace();
+      System.out.printf("[Error]: %s\n", e.getMessage());
+    } catch (FileNotFoundException e) {
+      System.out.println("[Error]: Files is not found or cannot be opened in given filepath!");
+      // e.printStackTrace();
+    } catch (SQLException e) {
+      System.out.println("[Error]: server cannot connect to database!");
+      // e.printStackTrace();
+    }
+  }
+
+  public void numOfRecords() {
+    try {
+      Class.forName(jdbcDriver);
+      Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+      Statement stmt = conn.createStatement();
+
+      int n;
+      ResultSet rs;
+      String sql;
+      String[] tables = { "user_category", "user", "car_category", "car", "copy", "produce", "rent" };
+      System.out.println("Number of records in each table:");
+      for (String s : tables) {
+        sql = String.format("SELECT COUNT(*) FROM %s", s);
+        rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+          n = rs.getInt("COUNT(*)");
+          System.out.printf("%s: %d\n", s, n);
+        }
+      }
+    } catch (ClassNotFoundException e) {
+      // e.printStackTrace();
+      System.out.printf("[Error]: %s\n", e.getMessage());
+    } catch (SQLException e) {
+      // e.printStackTrace();
+      System.out.println("[Error]: server cannot connect to database");
     }
   }
 }
