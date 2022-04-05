@@ -25,15 +25,15 @@ public class main {
           exit = true;
           continue;
         } else if (nextAct == '3') {
-          System.out.println("You have selected 3");
-          // need to change above
+          manager mgr = new manager();
+          mgr.run();
         } else if (nextAct == '2') {
           user obj = new user();
           obj.callUser();
           // need to change above
         } else if (nextAct == '1') {
           // System.out.println("You have selected 1");
-          Admin admin = new Admin();
+          admin admin = new admin();
           admin.run();
         } else {
           System.out.println("[Error]: Invalid selection. Please select between 1 and 4!");
