@@ -1,4 +1,9 @@
+import java.sql.*;
 import java.util.*;
+import javax.naming.Name;
+import javax.sound.midi.SysexMessage;
+import java.sql.*;
+import java.util.Scanner;
 
 public class main {
   public static void main(String[] args) {
@@ -23,7 +28,8 @@ public class main {
           System.out.println("You have selected 3");
           // need to change above
         } else if (nextAct == '2') {
-          System.out.println("You have selected 2");
+          user obj = new user();
+          obj.callUser();
           // need to change above
         } else if (nextAct == '1') {
           System.out.println("You have selected 1");
@@ -37,3 +43,4 @@ public class main {
     }
   }
 }
+
