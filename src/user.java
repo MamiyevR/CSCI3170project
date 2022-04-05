@@ -1,7 +1,29 @@
 import java.sql.*;
 import java.util.Scanner;
 
-class user {
+public  class user {
+    //Connecting to MySql using JAVA
+//    public static Connection connect() {
+//        String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
+//        String dbUsername = "Group25";
+//        String dbPassword = "CSCI3170";
+//        Connection con = null;
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//            con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword);
+//        } catch (ClassNotFoundException e) {
+//            System.out.println("[Error]: Java  MySql DB  Driver not found!!");
+//            System.exit(0);
+//        } catch (SQLException e) {
+//            System.out.println(e);
+//        }
+//        return con;
+//    }
+
+    public static String jdbcDriver = "com.mysql.jdbc.Driver";
+    public static String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
+    public static String userName = "Group25";
+    public static String password = "CSCI3170";
 
     public static void callUser() {
         Boolean var1 = false;
@@ -51,8 +73,9 @@ class user {
                     String sql = "SELECT callnum, name, ccname, manufacture, copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum  = '" + input + "' AND cpy.callnum = '" + input + "'ORDER BY callnum ASC";
 
                     try {
-                        Connection con = connect();
-                        Statement stmt = con.createStatement();
+                        Class.forName(jdbcDriver);
+                        Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+                        Statement stmt = conn.createStatement();
                         ResultSet rs = stmt.executeQuery(sql);
                         System.out.println("Call Num|Name|Car Category|Company|Available No. of Copy");
                         while (rs.next()) {
@@ -68,8 +91,12 @@ class user {
                             System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
                         }
                         System.out.println("End of Query");
-                    } catch (Exception e) {
-                        System.out.println("Hello: This is an error in callnum");
+                    } catch (ClassNotFoundException e) {
+                        // e.printStackTrace();
+                        System.out.printf("[Error]: %s\n", e.getMessage());
+                    } catch (SQLException e) {
+                        // e.printStackTrace();
+                        System.out.println("[Error]: server cannot connect to database");
                     }
                     //For sql involved create, insert, update, drop, delete:
                     //stmt.executeUpdate(sql);
@@ -86,9 +113,12 @@ class user {
                     // String sql = "Select * From car Where callnum = " + input + "";
                     String sql = "SELECT callnum, name, ccname, manufacture, copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND name LIKE '%" + input + "%' ORDER BY callnum ASC";
 
-                    Connection con = connect();
+                    //Connection con = connect();
 
-                    try (Statement stmt = con.createStatement()) {
+                    try{
+                        Class.forName(jdbcDriver);
+                        Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+                        Statement stmt = conn.createStatement();
                         ResultSet rs = stmt.executeQuery(sql);
                         System.out.println("Call Num|Name|Car Category|Company|Available No. of Copy");
                         while (rs.next()) {
@@ -104,8 +134,12 @@ class user {
                             System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
                         }
                         System.out.println("End of Query");
+                    } catch (ClassNotFoundException e) {
+                        // e.printStackTrace();
+                        System.out.printf("[Error]: %s\n", e.getMessage());
                     } catch (SQLException e) {
-                        System.out.println("Hello");
+                        // e.printStackTrace();
+                        System.out.println("[Error]: server cannot connect to database");
                     }
                 }
                 if (var4 == '3') {
@@ -116,10 +150,14 @@ class user {
                     // String sql = "Select * From car Where callnum = " + input + "";
                     String sql = "SELECT callnum, name, ccname, manufacture, copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND manufacture LIKE '%" + input + "%' ORDER BY callnum ASC";
 
-                    Connection con = connect();
+                    //Connection con = connect();
 
-                    try (Statement stmt = con.createStatement()) {
+                    try {
+                        Class.forName(jdbcDriver);
+                        Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+                        Statement stmt = conn.createStatement();
                         ResultSet rs = stmt.executeQuery(sql);
+
                         System.out.println("Call Num|Name|Car Category|Company|Available No. of Copy");
                         while (rs.next()) {
                             String callnum = rs.getString("callnum");
@@ -130,8 +168,12 @@ class user {
                             System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
                         }
                         System.out.println("End of Query");
+                    } catch (ClassNotFoundException e) {
+                        // e.printStackTrace();
+                        System.out.printf("[Error]: %s\n", e.getMessage());
                     } catch (SQLException e) {
-                        System.out.println("Hello");
+                        // e.printStackTrace();
+                        System.out.println("[Error]: server cannot connect to database");
                     }
                 }
                 var1 = true;
@@ -151,9 +193,12 @@ class user {
         // String sql = "Select * From car Where callnum = " + input + "";
         String sql = "SELECT callnum, copynum, name, manufacture, checkout, return_date FROM rent r, car c WHERE r.callnum = c.callnum  ORDER BY checkout DSC";
 
-        Connection con = connect();
 
-        try (Statement stmt = con.createStatement()) {
+
+        try {
+            Class.forName(jdbcDriver);
+            Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+            Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             System.out.println("Call Num|CopyNum|Name|Company|Check-out|Returned?");
             String check = "";
@@ -172,8 +217,12 @@ class user {
                 System.out.println(callnum + "|" + copynum + "|" + name + "|" + manufacture + "|" + checkout + "|" + check + "|");
             }
             System.out.println("End of Query");
+        } catch (ClassNotFoundException e) {
+            // e.printStackTrace();
+            System.out.printf("[Error]: %s\n", e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Hello");
+            // e.printStackTrace();
+            System.out.println("[Error]: server cannot connect to database");
         }
 
 
@@ -181,21 +230,5 @@ class user {
 
     }
 
-    //Connecting to MySql using JAVA
-    public static Connection connect() {
-        String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
-        String dbUsername = "Group25";
-        String dbPassword = "CSCI3170";
-        Connection con = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword);
-        } catch (ClassNotFoundException e) {
-            System.out.println("[Error]: Java  MySql DB  Driver not found!!");
-            System.exit(0);
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return con;
-    }
+
 }
