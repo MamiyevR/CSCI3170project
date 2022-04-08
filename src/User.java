@@ -59,7 +59,7 @@ class User {
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT callnum, name, ccname, manufacture, copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum  = '"
+            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, cpy.copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum  = '"
                 + input + "' AND cpy.callnum = '" + input + "'ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
@@ -73,7 +73,6 @@ class User {
               System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
             }
             System.out.println("End of Query");
-            obj.close();
           } else if (var4 == '2') {
             System.out.printf("Type in the search keyword: ");
             // Queries to follow for name search
@@ -94,7 +93,6 @@ class User {
               System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
             }
             System.out.println("End of Query");
-            obj.close();
           } else if (var4 == '3') {
             System.out.printf("Type in the search keyword: ");
             Scanner obj = new Scanner(System.in);
@@ -114,7 +112,6 @@ class User {
               System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
             }
             System.out.println("End of Query");
-            obj.close();
           } else {
             System.out.println("[Error]: Invalid selection. Please select between 1 and 3!");
           }
