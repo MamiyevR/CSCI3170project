@@ -23,10 +23,9 @@ public class main {
           System.out.println("You have selected 3");
           // need to change above
         } else if (nextAct == '2') {
-          System.out.println("You have selected 2");
-          // need to change above
+          User obj = new User();
+          obj.callUser();
         } else if (nextAct == '1') {
-          // System.out.println("You have selected 1");
           Admin admin = new Admin();
           admin.run();
         } else {
