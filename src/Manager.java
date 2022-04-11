@@ -214,6 +214,77 @@ public class Manager {
     }
 
     public void returnCar() {
+        try {
+            // First, he/she needs to input call number and copy number of the car copy being borrowed and
+            // the user ID of the user.
+
+            // Setup connection
+            Class.forName(jdbcDriver);
+            Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+            Statement stmt = conn.createStatement();
+
+            Scanner inputScanner = new Scanner(System.in);
+
+            String userID = this.readUserID(stmt, inputScanner);
+            if (Objects.equals(userID, "")) return;
+
+            String callNumber = this.readCallNumber(stmt, inputScanner);
+            if (Objects.equals(callNumber, "")) return;
+
+            String copyNumber = this.readCopyNumber(stmt, inputScanner);
+            if (Objects.equals(copyNumber, "")) return;
+
+
+            // Then the system should check if a renting record corresponding to
+            // the specified user ID, call number and copy number exists
+            // and the return date is null.
+            ResultSet rs;
+
+            // TODO: To be verified!
+            String sql = "SELECT * FROM rent r " +
+                    "WHERE r.return_date IS NULL AND r.uid='" + userID + "' " +
+                    "AND r.callnum='" + callNumber + "' " +
+                    "AND r.copynum=" + Integer.parseInt(copyNumber);
+            Boolean should_exit = Boolean.FALSE;
+            try {
+                rs = stmt.executeQuery(sql);
+                rs.last();
+                if (rs.getRow() != 1) {
+                    System.out.println("The car with user ID: " + userID + ", Call Number: " +
+                            callNumber + ", Copy Number: " + copyNumber + " is not borrowed now!");
+                    should_exit = Boolean.TRUE;
+                }
+                ;
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                should_exit = Boolean.TRUE;
+            }
+            if (should_exit) {
+                return;
+            }
+
+            // If such record is found, the car copy can be returned,
+            // and the return date of the renting record found is updated
+            // to be the current date of the database server.
+            String today_date = this.getDate();
+            sql = "UPDATE rent r SET return_date = '" + today_date + "' " +
+                    "WHERE r.uid = '" + userID + "' " +
+                    "AND r.callnum = '" + callNumber + "' " +
+                    "AND r.copynum = " + Integer.parseInt(copyNumber);
+            stmt.executeUpdate(sql);
+
+            System.out.println(String.format(
+                    "Car returning performed successfully. The User ID %s, Call Number %s, Copy Number %s, Return Date %s.",
+                    userID, callNumber, Integer.parseInt(copyNumber), today_date
+            ));
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void listUnreturnedCarCopies() {
