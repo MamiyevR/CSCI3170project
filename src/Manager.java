@@ -1,12 +1,16 @@
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 
 public class Manager {
     private String jdbcDriver = "com.mysql.jdbc.Driver";
@@ -108,13 +112,13 @@ public class Manager {
         return callNum;
     }
 
-    private String readCopyNumber(Statement stmt, Scanner inputScanner) {
+    private String readCopyNumber(String callnum, Statement stmt, Scanner inputScanner) {
         System.out.printf("Enter the Copy Number: ");
         String copyNum = inputScanner.next();
 
 //         Check whether the User ID is in the database
         String sql;
-        sql = "SELECT * FROM copy c WHERE c.copynum='" + copyNum + "'";
+        sql = "SELECT * FROM copy c WHERE c.copynum='" + copyNum + "' AND c.callnum='" + callnum + "' ";
 //        System.out.println("SQL: "+ sql);
 
         try {
@@ -156,7 +160,7 @@ public class Manager {
             String callNumber = this.readCallNumber(stmt, inputScanner);
             if (Objects.equals(callNumber, "")) return;
 
-            String copyNumber = this.readCopyNumber(stmt, inputScanner);
+            String copyNumber = this.readCopyNumber(callNumber, stmt, inputScanner);
             if (Objects.equals(copyNumber, "")) return;
 
             // Do job!
@@ -196,7 +200,14 @@ public class Manager {
             sql = String.format("INSERT INTO rent(uid, callnum, copynum, checkout, return_date)" +
                             "VALUES (\"%s\", \"%s\", %d, \"%s\", NULL)",
                     userID, callNumber, Integer.parseInt(copyNumber), today_date);
-            stmt.executeUpdate(sql);
+            try {
+                stmt.executeUpdate(sql);
+            } catch (SQLException e) {
+                // It is possible that the same car is borrowed and returned TODAY! We can't rent it again!
+                System.out.println("The car with user ID: " + userID + ", Call Number: " +
+                        callNumber + ", Copy Number: " + copyNumber + " is not available at this time!");
+                return ;
+            }
 
             // Step 3: Finally, there should be an informative message whether
             // the car copy can be lent successfully in layman terms.
@@ -205,12 +216,9 @@ public class Manager {
                     userID, callNumber, copyNumber, today_date
             ));
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     public void returnCar() {
@@ -231,7 +239,7 @@ public class Manager {
             String callNumber = this.readCallNumber(stmt, inputScanner);
             if (Objects.equals(callNumber, "")) return;
 
-            String copyNumber = this.readCopyNumber(stmt, inputScanner);
+            String copyNumber = this.readCopyNumber(callNumber, stmt, inputScanner);
             if (Objects.equals(copyNumber, "")) return;
 
 
@@ -287,7 +295,63 @@ public class Manager {
 
     }
 
+    public String readDate(Scanner inputScanner) throws ParseException {
+        System.out.println("Type in the starting date[dd/mm/yyyy]: ");
+        String dateBeforeParsing = inputScanner.next();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        java.util.Date startingDate = sdf.parse(dateBeforeParsing);
+
+        System.out.println("Type in the ending date[dd/mm/yyyy]: ");
+        String endDateBeforeParsing = inputScanner.next();
+        java.util.Date endingDate = sdf.parse(endDateBeforeParsing);
+
+        if (startingDate.after(endingDate)) {
+            System.out.println("Input starting date is after the ending date. Invalid input!");
+            return "";
+        }
+
+        sdf.applyPattern("yyyy-MM-dd");
+        return "r.checkout BETWEEN '" + sdf.format(startingDate) + " 00:00:00' " +
+                "AND '" + sdf.format(endingDate) + " 23:59:59' ";
+    }
+
     public void listUnreturnedCarCopies() {
+        try {
+            // Setup connection
+            Class.forName(jdbcDriver);
+            Connection conn = DriverManager.getConnection(dbAddress, userName, password);
+            Statement stmt = conn.createStatement();
+            Scanner inputScanner = new Scanner(System.in);
+            ResultSet rs;
+
+            String datePeriod = this.readDate(inputScanner);
+            if (Objects.equals(datePeriod, "")) return;
+            Boolean already_print = Boolean.FALSE;
+            String sql = "SELECT * FROM rent r WHERE " + datePeriod + "AND r.return_date is NULL";
+            try {
+                rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    String uid = rs.getString("uid");
+                    String callnum = rs.getString("callnum");
+                    double copynum = rs.getInt("copynum");
+                    String checkoutdate = rs.getString("checkout");
+                    if (already_print == Boolean.FALSE){
+                        System.out.println("|UID|CallNum|CopyNum|Checkout|");
+                    }
+                    System.out.printf("|%s|%s|%s|%s|%n", uid, callnum, copynum, checkoutdate);
+                    already_print = Boolean.TRUE;
+                }
+                if (already_print) System.out.println("End of Query");
+                else System.out.println("Record not found!");
+                rs.close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } catch (ClassNotFoundException | SQLException | ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
 
