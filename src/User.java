@@ -79,7 +79,7 @@ class User {
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT callnum, name, ccname, manufacture, copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND name LIKE '%"
+            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, cpy.copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND name LIKE '%"
                 + input + "%' ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
@@ -98,7 +98,7 @@ class User {
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT callnum, name, ccname, manufacture, copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND manufacture LIKE '%"
+            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, cpy.copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND manufacture LIKE '%"
                 + input + "%' ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
@@ -138,7 +138,7 @@ class User {
       System.out.println("Enter the user ID:");
       Scanner obj = new Scanner(System.in);
       String input = obj.nextLine();
-      String sql = "SELECT callnum, copynum, name, manufacture, checkout, return_date FROM rent r, car c WHERE r.callnum = c.callnum  ORDER BY checkout DSC";
+      String sql = "SELECT c.callnum, cpy.copynum, c.name, c.manufacture, r.checkout, r.return_date FROM rent r, car c, copy cpy WHERE r.callnum = c.callnum AND c.callnum = cpy.callnum ORDER BY checkout DSC";
 
       rs = stmt.executeQuery(sql);
       System.out.println("Call Num|CopyNum|Name|Company|Check-out|Returned?");
