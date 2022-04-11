@@ -20,14 +20,14 @@ public class main {
           exit = true;
           continue;
         } else if (nextAct == '3') {
-          System.out.println("You have selected 3");
-          // need to change above
+          manager mgr = new manager();
+          mgr.run();
         } else if (nextAct == '2') {
           User obj = new User();
           obj.callUser();
         } else if (nextAct == '1') {
-          Admin admin = new Admin();
-          admin.run();
+          admin adm = new admin();
+          adm.run();
         } else {
           System.out.println("[Error]: Invalid selection. Please select between 1 and 4!");
         }

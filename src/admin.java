@@ -2,22 +2,27 @@ import java.util.*;
 import java.sql.*;
 import java.io.*;
 
-public class Admin {
+public class admin {
   private String jdbcDriver = "com.mysql.jdbc.Driver";
-  private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
-  private String userName = "Group25";
-  private String password = "CSCI3170";
+//  private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
+//  private String userName = "Group25";
+//  private String password = "CSCI3170";
 
-  public Admin() {
+  // Used for local test
+    private String dbAddress = "jdbc:mysql://localhost:3306/db25";
+    private String userName = "root";
+    private String password = "12345678";
+
+  public admin() {
   }
 
   public int run() {
     Boolean exit = false;
     while (!exit) {
-      System.out.println("-----Operations for adminstrator menu-----");
+      System.out.println("-----Operations for administrator menu-----");
       System.out.println("What kind of operations would you like to perform?");
       System.out.println("1. Create all tables");
-      System.out.println("2. Delete all table");
+      System.out.println("2. Delete all tables");
       System.out.println("3. Load from datafile");
       System.out.println("4. Show number of records in each table");
       System.out.println("5. Return to the main menu");
@@ -50,11 +55,26 @@ public class Admin {
   }
 
   public void createTable() {
+    // Setup the connetion
     try {
+      System.out.print("Processing...");
       Class.forName(jdbcDriver);
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
-      String sql = "CREATE TABLE user_category (" +
+
+    // Check whether the table is there
+    ResultSet rs;
+    String sql;
+      sql = String.format("SHOW TABLES");
+      rs = stmt.executeQuery(sql);
+      if (rs.next()){
+        // Some tables already exist!
+        System.out.println("Previous tables are not cleared. Now removing them...");
+        this.dropTable();
+      }
+
+    // Create tables
+      sql = "CREATE TABLE user_category (" +
           "ucid DECIMAL(1) UNSIGNED, " +
           "max DECIMAL(1) UNSIGNED NOT NULL, " +
           "period DECIMAL(2) UNSIGNED NOT NULL, " +
@@ -106,18 +126,19 @@ public class Admin {
           "PRIMARY KEY (callnum, cname), " +
           "FOREIGN KEY (callnum) REFERENCES car(callnum) ON UPDATE CASCADE ON DELETE CASCADE)";
       stmt.executeUpdate(sql);
-      System.out.println("...Done. Database is initialized");
+      System.out.println("Done. Database is initialized.");
     } catch (ClassNotFoundException e) {
-      // e.printStackTrace();
+       e.printStackTrace();
       System.out.printf("[Error]: %s\n", e.getMessage());
     } catch (SQLException e) {
-      // e.printStackTrace();
+       e.printStackTrace();
       System.out.println("[Error]: server cannot connect to database");
     }
   }
 
   public void dropTable() {
     try {
+      System.out.print("Processing...");
       Class.forName(jdbcDriver);
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
