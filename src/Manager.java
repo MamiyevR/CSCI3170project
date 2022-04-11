@@ -5,6 +5,8 @@ import java.sql.Statement;
 import java.util.Objects;
 import java.util.Scanner;
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 public class Manager {
     private String jdbcDriver = "com.mysql.jdbc.Driver";
@@ -59,16 +61,17 @@ public class Manager {
 
 //         Check whether the User ID is in the database
         String sql;
-        sql = "SELECT * FROM rent R WHERE R.uid='" + userID + "'";
+        sql = "SELECT * FROM user u WHERE u.uid='" + userID + "'";
 //        System.out.println("SQL: "+ sql);
 
         try {
             ResultSet rs = stmt.executeQuery(sql);
             rs.last();
-            if (rs.getRow() != 1){
+            if (rs.getRow() != 1) {
                 System.out.println("The input User ID: " + userID + " is not found in database!");
                 userID = "";
-            };
+            }
+            ;
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,16 +88,17 @@ public class Manager {
 
 //         Check whether the User ID is in the database
         String sql;
-        sql = "SELECT * FROM rent R WHERE R.callnum='" + callNum + "'";
+        sql = "SELECT * FROM car c WHERE c.callnum='" + callNum + "'";
 //        System.out.println("SQL: "+ sql);
 
         try {
             ResultSet rs = stmt.executeQuery(sql);
             rs.last();
-            if (rs.getRow() != 1){
+            if (rs.getRow() != 1) {
                 System.out.println("The input Call Number: " + callNum + " is not found in database!");
                 callNum = "";
-            };
+            }
+            ;
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,16 +114,17 @@ public class Manager {
 
 //         Check whether the User ID is in the database
         String sql;
-        sql = "SELECT * FROM rent R WHERE R.copynum='" + copyNum + "'";
+        sql = "SELECT * FROM copy c WHERE c.copynum='" + copyNum + "'";
 //        System.out.println("SQL: "+ sql);
 
         try {
             ResultSet rs = stmt.executeQuery(sql);
             rs.last();
-            if (rs.getRow() != 1){
+            if (rs.getRow() != 1) {
                 System.out.println("The input Copy Number: " + copyNum + " is not found in database!");
                 copyNum = "";
-            };
+            }
+            ;
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -127,6 +132,12 @@ public class Manager {
         }
 
         return copyNum;
+    }
+
+    private String getDate() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime now = LocalDateTime.now();
+        return dtf.format(now);
     }
 
     public void rentCar() {
@@ -153,38 +164,46 @@ public class Manager {
             // to be rented (i.e., There is no rent record of the specified car copy
             // with NULL return date).
             ResultSet rs;
-            String sql = "SELECT * FROM rent r" +
-            "WHERE r.return IS NULL AND r.uid='" + userID + "' " +
-                    "AND r.callnum='" + callNumber + "' AND r.copynum='" + copyNumber + "'";
+
+            // TODO: To be verified!
+            String sql = "SELECT * FROM rent r " +
+                    "WHERE r.return_date IS NULL AND r.uid='" + userID + "' " +
+                    "AND r.callnum='" + callNumber + "' " +
+                    "AND r.copynum=" + Integer.parseInt(copyNumber);
             Boolean should_exit = Boolean.FALSE;
             try {
                 rs = stmt.executeQuery(sql);
                 rs.last();
-                if (rs.getRow() == 1){
+                if (rs.getRow() == 1) {
                     System.out.println("The car with user ID: " + userID + ", Call Number: " +
                             callNumber + ", Copy Number: " + copyNumber + " is not available at this time!");
                     should_exit = Boolean.TRUE;
-                };
+                }
+                ;
                 rs.close();
             } catch (SQLException e) {
                 e.printStackTrace();
                 should_exit = Boolean.TRUE;
             }
-            if (should_exit) {return; }
+            if (should_exit) {
+                return;
+            }
 
             // Step 2: If the car copy is available, it is then borrowed and a new
             // check-out record of the specified car copy and user with NULL
             // return date should be added to the database accordingly.
+            String today_date = this.getDate();
+            sql = String.format("INSERT INTO rent(uid, callnum, copynum, checkout, return_date)" +
+                            "VALUES (\"%s\", \"%s\", %d, \"%s\", NULL)",
+                    userID, callNumber, Integer.parseInt(copyNumber), today_date);
+            stmt.executeUpdate(sql);
 
-
-
-            //
             // Step 3: Finally, there should be an informative message whether
             // the car copy can be lent successfully in layman terms.
-            //
-
-            // Finish
-            System.out.println("Car renting performed successfully.");
+            System.out.println(String.format(
+                    "Car renting performed successfully. The User ID %s, Call Number %s, Copy Number %s, Checkout Date %s.",
+                    userID, callNumber, copyNumber, today_date
+            ));
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
