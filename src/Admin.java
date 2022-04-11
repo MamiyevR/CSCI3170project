@@ -165,7 +165,8 @@ public class Admin {
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
       String sql;
-      System.out.printf("Type in the Source Data Folder Path: ");
+      String cwd = System.getProperty("user.dir");
+      System.out.printf("Type in the Source Data Folder Path: (Current working directory: " + cwd + ")");
       String inputString = input.next();
 
       File tempFile = new File(inputString + "/car_category.txt");
