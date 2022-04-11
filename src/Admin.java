@@ -130,8 +130,8 @@ public class Admin {
       }
       System.out.println("...Done. Database is removed");
     } catch (ClassNotFoundException e) {
-      // e.printStackTrace();
-      System.out.printf("[Error]: %s\n", e.getMessage());
+      e.printStackTrace();
+      // System.out.printf("[Error]: %s\n", e.getMessage());
     } catch (SQLException e) {
       // e.printStackTrace();
       System.out.println("[Error]: server cannot connect to database");
