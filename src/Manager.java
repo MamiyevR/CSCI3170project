@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Objects;
 import java.util.Scanner;
 import java.sql.*;
 
@@ -56,21 +57,22 @@ public class Manager {
         System.out.printf("Enter the User ID: ");
         String userID = inputScanner.next();
 
-        // Check whether the User ID is in the database
+//         Check whether the User ID is in the database
         String sql;
-        sql = "SELECT uid, callnum, copynum, checkout, return_date" +
-                "FROM rent R" +
-                "WHERE R.uid=" + userID;
+        sql = "SELECT * FROM rent R WHERE R.uid='" + userID + "'";
+//        System.out.println("SQL: "+ sql);
+
         try {
             ResultSet rs = stmt.executeQuery(sql);
             rs.last();
             if (rs.getRow() != 1){
-                System.out.println("The input User ID " + userID + " is not found in database!");
+                System.out.println("The input User ID: " + userID + " is not found in database!");
                 userID = "";
             };
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            userID = "";
         }
 
         return userID;
@@ -78,10 +80,53 @@ public class Manager {
 
 
     private String readCallNumber(Statement stmt, Scanner inputScanner) {
-        return "";
+        System.out.printf("Enter the Call Number: ");
+        String callNum = inputScanner.next();
+
+//         Check whether the User ID is in the database
+        String sql;
+        sql = "SELECT * FROM rent R WHERE R.callnum='" + callNum + "'";
+//        System.out.println("SQL: "+ sql);
+
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            rs.last();
+            if (rs.getRow() != 1){
+                System.out.println("The input Call Number: " + callNum + " is not found in database!");
+                callNum = "";
+            };
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            callNum = "";
+        }
+
+        return callNum;
     }
+
     private String readCopyNumber(Statement stmt, Scanner inputScanner) {
-        return "";
+        System.out.printf("Enter the Copy Number: ");
+        String copyNum = inputScanner.next();
+
+//         Check whether the User ID is in the database
+        String sql;
+        sql = "SELECT * FROM rent R WHERE R.copynum='" + copyNum + "'";
+//        System.out.println("SQL: "+ sql);
+
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            rs.last();
+            if (rs.getRow() != 1){
+                System.out.println("The input Copy Number: " + copyNum + " is not found in database!");
+                copyNum = "";
+            };
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            copyNum = "";
+        }
+
+        return copyNum;
     }
 
     public void rentCar() {
@@ -95,25 +140,48 @@ public class Manager {
             Scanner inputScanner = new Scanner(System.in);
 
             String userID = this.readUserID(stmt, inputScanner);
+            if (Objects.equals(userID, "")) return;
+
             String callNumber = this.readCallNumber(stmt, inputScanner);
+            if (Objects.equals(callNumber, "")) return;
+
             String copyNumber = this.readCopyNumber(stmt, inputScanner);
-
-            System.out.println("Read user ID: %s" + userID);
-
+            if (Objects.equals(copyNumber, "")) return;
 
             // Do job!
             // Step 1: Then the system should check whether that car is available
             // to be rented (i.e., There is no rent record of the specified car copy
             // with NULL return date).
-            //
+            ResultSet rs;
+            String sql = "SELECT * FROM rent r" +
+            "WHERE r.return IS NULL AND r.uid='" + userID + "' " +
+                    "AND r.callnum='" + callNumber + "' AND r.copynum='" + copyNumber + "'";
+            Boolean should_exit = Boolean.FALSE;
+            try {
+                rs = stmt.executeQuery(sql);
+                rs.last();
+                if (rs.getRow() == 1){
+                    System.out.println("The car with user ID: " + userID + ", Call Number: " +
+                            callNumber + ", Copy Number: " + copyNumber + " is not available at this time!");
+                    should_exit = Boolean.TRUE;
+                };
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                should_exit = Boolean.TRUE;
+            }
+            if (should_exit) {return; }
+
             // Step 2: If the car copy is available, it is then borrowed and a new
             // check-out record of the specified car copy and user with NULL
             // return date should be added to the database accordingly.
+
+
+
             //
             // Step 3: Finally, there should be an informative message whether
             // the car copy can be lent successfully in layman terms.
             //
-
 
             // Finish
             System.out.println("Car renting performed successfully.");
