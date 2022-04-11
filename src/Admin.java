@@ -2,7 +2,7 @@ import java.util.*;
 import java.sql.*;
 import java.io.*;
 
-public class admin {
+public class Admin {
   private String jdbcDriver = "com.mysql.jdbc.Driver";
 //  private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
 //  private String userName = "Group25";
@@ -13,7 +13,7 @@ public class admin {
     private String userName = "root";
     private String password = "12345678";
 
-  public admin() {
+  public Admin() {
   }
 
   public int run() {

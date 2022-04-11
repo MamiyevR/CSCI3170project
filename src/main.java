@@ -20,13 +20,13 @@ public class main {
           exit = true;
           continue;
         } else if (nextAct == '3') {
-          manager mgr = new manager();
+          Manager mgr = new Manager();
           mgr.run();
         } else if (nextAct == '2') {
           User obj = new User();
           obj.callUser();
         } else if (nextAct == '1') {
-          admin adm = new admin();
+          Admin adm = new Admin();
           adm.run();
         } else {
           System.out.println("[Error]: Invalid selection. Please select between 1 and 4!");

@@ -7,6 +7,9 @@ class User {
   private String userName = "Group25";
   private String password = "CSCI3170";
 
+  public User() {
+  }
+
   public void callUser() {
     Boolean var1 = false;
     while (!var1) {

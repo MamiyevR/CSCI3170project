@@ -3,22 +3,26 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
-import java.util.*;
 import java.sql.*;
 
-public class manager {
+public class Manager {
     private String jdbcDriver = "com.mysql.jdbc.Driver";
-    private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
-    private String userName = "Group25";
-    private String password = "CSCI3170";
+//    private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
+//    private String userName = "Group25";
+//    private String password = "CSCI3170";
 
-    public manager() {
+    // Used for local test
+    private String dbAddress = "jdbc:mysql://localhost:3306/db25";
+    private String userName = "root";
+    private String password = "12345678";
+
+    public Manager() {
     }
 
     public int run() {
         Boolean exit = false;
         while (!exit) {
-            System.out.println("-----Operations for administrator menu-----");
+            System.out.println("-----Operations for manager menu-----");
             System.out.println("What kind of operations would you like to perform?");
             System.out.println("1. Car Renting");
             System.out.println("2. Car Returning");
@@ -93,6 +97,8 @@ public class manager {
             String userID = this.readUserID(stmt, inputScanner);
             String callNumber = this.readCallNumber(stmt, inputScanner);
             String copyNumber = this.readCopyNumber(stmt, inputScanner);
+
+            System.out.println("Read user ID: %s" + userID);
 
 
             // Do job!
