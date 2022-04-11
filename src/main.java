@@ -26,8 +26,8 @@ public class main {
           User obj = new User();
           obj.callUser();
         } else if (nextAct == '1') {
-          Admin admin = new Admin();
-          admin.run();
+          admin adm = new admin();
+          adm.run();
         } else {
           System.out.println("[Error]: Invalid selection. Please select between 1 and 4!");
         }
