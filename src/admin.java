@@ -55,12 +55,26 @@ public class admin {
   }
 
   public void createTable() {
+    // Setup the connetion
     try {
       System.out.print("Processing...");
       Class.forName(jdbcDriver);
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
-      String sql = "CREATE TABLE user_category (" +
+
+    // Check whether the table is there
+    ResultSet rs;
+    String sql;
+      sql = String.format("SHOW TABLES");
+      rs = stmt.executeQuery(sql);
+      if (rs.next()){
+        // Some tables already exist!
+        System.out.println("Previous tables are not cleared. Now removing them...");
+        this.dropTable();
+      }
+
+    // Create tables
+      sql = "CREATE TABLE user_category (" +
           "ucid DECIMAL(1) UNSIGNED, " +
           "max DECIMAL(1) UNSIGNED NOT NULL, " +
           "period DECIMAL(2) UNSIGNED NOT NULL, " +
