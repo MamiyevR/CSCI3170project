@@ -66,16 +66,22 @@ class User {
                 + input + "' AND cpy.callnum = '" + input + "'ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
-            System.out.println("Call Num|Name|Car Category|Company|Available No. of Copy");
+            boolean already_print = Boolean.FALSE;
             while (rs.next()) {
               String callnum = rs.getString("callnum");
               String name = rs.getString("name");
               String ccname = rs.getString("ccname");
               String manufacture = rs.getString("manufacture");
               double numcop = rs.getInt("copynum");
-              System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
+              if (already_print == Boolean.FALSE) {
+                System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
+              }
+              System.out.println("|" + callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
+              already_print = Boolean.TRUE;
             }
-            System.out.println("End of Query");
+            if (already_print){
+              System.out.println("End of Query");
+            }
           } else if (var4 == '2') {
             System.out.printf("Type in the search keyword: ");
             // Queries to follow for name search
