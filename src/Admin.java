@@ -4,14 +4,14 @@ import java.io.*;
 
 public class Admin {
   private String jdbcDriver = "com.mysql.jdbc.Driver";
-//  private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
-//  private String userName = "Group25";
-//  private String password = "CSCI3170";
+  // private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
+  // private String userName = "Group25";
+  // private String password = "CSCI3170";
 
   // Used for local test
-    private String dbAddress = "jdbc:mysql://localhost:3306/db25";
-    private String userName = "root";
-    private String password = "12345678";
+  private String dbAddress = "jdbc:mysql://localhost:3306/db25";
+  private String userName = "root";
+  private String password = "12345678";
 
   public Admin() {
   }
@@ -62,18 +62,18 @@ public class Admin {
       Connection conn = DriverManager.getConnection(dbAddress, userName, password);
       Statement stmt = conn.createStatement();
 
-    // Check whether the table is there
-    ResultSet rs;
-    String sql;
+      // Check whether the table is there
+      ResultSet rs;
+      String sql;
       sql = String.format("SHOW TABLES");
       rs = stmt.executeQuery(sql);
-      if (rs.next()){
+      if (rs.next()) {
         // Some tables already exist!
         System.out.println("Previous tables are not cleared. Now removing them...");
         this.dropTable();
       }
 
-    // Create tables
+      // Create tables
       sql = "CREATE TABLE user_category (" +
           "ucid DECIMAL(1) UNSIGNED, " +
           "max DECIMAL(1) UNSIGNED NOT NULL, " +
@@ -128,10 +128,10 @@ public class Admin {
       stmt.executeUpdate(sql);
       System.out.println("Done. Database is initialized.");
     } catch (ClassNotFoundException e) {
-       e.printStackTrace();
+      // e.printStackTrace();
       System.out.printf("[Error]: %s\n", e.getMessage());
     } catch (SQLException e) {
-       e.printStackTrace();
+      // e.printStackTrace();
       System.out.println("[Error]: server cannot connect to database");
     }
   }
@@ -151,8 +151,8 @@ public class Admin {
       }
       System.out.println("...Done. Database is removed");
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      // System.out.printf("[Error]: %s\n", e.getMessage());
+      // e.printStackTrace();
+      System.out.printf("[Error]: %s\n", e.getMessage());
     } catch (SQLException e) {
       // e.printStackTrace();
       System.out.println("[Error]: server cannot connect to database");
@@ -216,10 +216,11 @@ public class Admin {
         sql = String.format("INSERT IGNORE INTO produce(callnum, cname)" +
             "VALUES (\"%s\", \"%s\")", datas[0], datas[3]);
         stmt.executeUpdate(sql);
-
-        sql = String.format("INSERT IGNORE INTO copy(callnum, copynum)" +
-            "VALUES (\"%s\", %d)", datas[0], Integer.parseInt(datas[1]));
-        stmt.executeUpdate(sql);
+        for (int i = 1; i <= Integer.parseInt(datas[1]); i++) {
+          sql = String.format("INSERT IGNORE INTO copy(callnum, copynum)" +
+              "VALUES (\"%s\", %d)", datas[0], i);
+          stmt.executeUpdate(sql);
+        }
       }
       reader.close();
 

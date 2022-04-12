@@ -46,11 +46,11 @@ class User {
       Statement stmt = conn.createStatement();
       ResultSet rs;
 
-      System.out.println("Choose the Search Criterion:");
-      System.out.println("1. call number");
-      System.out.println("2. name");
-      System.out.println("3. company");
       while (true) {
+        System.out.println("Choose the Search criterion: ");
+        System.out.println("1. call number");
+        System.out.println("2. name");
+        System.out.println("3. company");
         System.out.printf("Choose the search criterion: ");
         Scanner var2 = new Scanner(System.in);
         String var3 = var2.next();
@@ -62,8 +62,8 @@ class User {
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, cpy.copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum  = '"
-                + input + "' AND cpy.callnum = '" + input + "'ORDER BY callnum ASC";
+            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, MAX(cpy.copynum) AS copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum  = '"
+                + input + "' AND cpy.callnum = '" + input + "' ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
             boolean already_print = Boolean.FALSE;
@@ -72,55 +72,76 @@ class User {
               String name = rs.getString("name");
               String ccname = rs.getString("ccname");
               String manufacture = rs.getString("manufacture");
-              double numcop = rs.getInt("copynum");
+              int numcop = rs.getInt("copynum");
               if (already_print == Boolean.FALSE) {
                 System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
               }
               System.out.println("|" + callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
               already_print = Boolean.TRUE;
             }
-            if (already_print){
-              System.out.println("End of Query");
+            if (already_print) {
+              System.out.println("End of Query\n");
+            } else {
+              System.out.println("Query is empty");
             }
+            break;
           } else if (var4 == '2') {
             System.out.printf("Type in the search keyword: ");
             // Queries to follow for name search
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, cpy.copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND name LIKE '%"
-                + input + "%' ORDER BY callnum ASC";
+            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, MAX(cpy.copynum) AS copynum  FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND name LIKE '%"
+                + input + "%' GROUP BY callnum ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
-            System.out.println("Call Num|Name|Car Category|Company|Available No. of Copy");
+            boolean already_print = Boolean.FALSE;
             while (rs.next()) {
               String callnum = rs.getString("callnum");
               String name = rs.getString("name");
               String ccname = rs.getString("ccname");
               String manufacture = rs.getString("manufacture");
-              double numcop = rs.getInt("copynum");
+              int numcop = rs.getInt("copynum");
+              if (already_print == Boolean.FALSE) {
+                System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
+              }
               System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
+              already_print = Boolean.TRUE;
             }
-            System.out.println("End of Query");
+            if (already_print) {
+              System.out.println("End of Query\n");
+            } else {
+              System.out.println("Query is empty");
+            }
+            break;
           } else if (var4 == '3') {
             System.out.printf("Type in the search keyword: ");
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, cpy.copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND manufacture LIKE '%"
-                + input + "%' ORDER BY callnum ASC";
+            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, MAX(cpy.copynum) AS copynum  FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND manufacture LIKE '%"
+                + input + "%' GROUP BY callnum ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
-            System.out.println("Call Num|Name|Car Category|Company|Available No. of Copy");
+            boolean already_print = Boolean.FALSE;
             while (rs.next()) {
               String callnum = rs.getString("callnum");
               String name = rs.getString("name");
               String ccname = rs.getString("ccname");
               String manufacture = rs.getString("manufacture");
-              double numcop = rs.getInt("copynum");
+              int numcop = rs.getInt("copynum");
+              if (already_print == Boolean.FALSE) {
+                System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
+              }
               System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
+              already_print = Boolean.TRUE;
             }
-            System.out.println("End of Query");
+            if (already_print) {
+              System.out.println("End of Query\n");
+            } else {
+              System.out.println("Query is empty");
+            }
+            break;
           } else {
             System.out.println("[Error]: Invalid selection. Please select between 1 and 3!");
           }
@@ -144,7 +165,7 @@ class User {
       Statement stmt = conn.createStatement();
       ResultSet rs;
 
-      System.out.println("Enter the user ID:");
+      System.out.printf("Enter the user ID:");
       Scanner obj = new Scanner(System.in);
       String input = obj.nextLine();
       String sql = "SELECT c.callnum, cpy.copynum, c.name, c.manufacture, r.checkout, r.return_date FROM rent r, car c, copy cpy WHERE r.callnum = c.callnum AND c.callnum = cpy.callnum ORDER BY checkout DSC";
