@@ -62,8 +62,8 @@ class User {
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, MAX(cpy.copynum) AS copynum FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum  = '"
-                + input + "' AND cpy.callnum = '" + input + "' ORDER BY callnum ASC";
+            String sql = "SELECT c.callnum, c.name, cc.ccname, p.cname, MAX(cpy.copynum) AS copynum FROM car c, car_category cc, copy cpy, produce p WHERE c.ccid = cc.ccid AND c.callnum  = '"
+                + input + "' AND cpy.callnum = '" + input + "' AND c.callnum = p.callnum ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
             boolean already_print = Boolean.FALSE;
@@ -71,12 +71,12 @@ class User {
               String callnum = rs.getString("callnum");
               String name = rs.getString("name");
               String ccname = rs.getString("ccname");
-              String manufacture = rs.getString("manufacture");
+              String cname = rs.getString("cname");
               int numcop = rs.getInt("copynum");
               if (already_print == Boolean.FALSE) {
                 System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
               }
-              System.out.println("|" + callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
+              System.out.println("|" + callnum + "|" + name + "|" + ccname + "|" + cname + "|" + numcop + "|");
               already_print = Boolean.TRUE;
             }
             if (already_print) {
@@ -91,7 +91,7 @@ class User {
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, MAX(cpy.copynum) AS copynum  FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND name LIKE '%"
+            String sql = "SELECT c.callnum, c.name, cc.ccname, p.cname, MAX(cpy.copynum) AS copynum  FROM car c, car_category cc, copy cpy, produce p WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND c.callnum = p.callnum AND name LIKE '%"
                 + input + "%' GROUP BY callnum ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
@@ -100,12 +100,12 @@ class User {
               String callnum = rs.getString("callnum");
               String name = rs.getString("name");
               String ccname = rs.getString("ccname");
-              String manufacture = rs.getString("manufacture");
+              String cname = rs.getString("cname");
               int numcop = rs.getInt("copynum");
               if (already_print == Boolean.FALSE) {
                 System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
               }
-              System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
+              System.out.println(callnum + "|" + name + "|" + ccname + "|" + cname + "|" + numcop + "|");
               already_print = Boolean.TRUE;
             }
             if (already_print) {
@@ -119,7 +119,7 @@ class User {
             Scanner obj = new Scanner(System.in);
             String input = obj.nextLine();
 
-            String sql = "SELECT c.callnum, c.name, cc.ccname, c.manufacture, MAX(cpy.copynum) AS copynum  FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND manufacture LIKE '%"
+            String sql = "SELECT c.callnum, c.name, cc.ccname, p.cname, MAX(cpy.copynum) AS copynum  FROM car c, car_category cc, copy cpy WHERE c.ccid = cc.ccid AND c.callnum = cpy.callnum AND c.callnum = p.callnum AND manufacture LIKE '%"
                 + input + "%' GROUP BY callnum ORDER BY callnum ASC";
 
             rs = stmt.executeQuery(sql);
@@ -128,12 +128,12 @@ class User {
               String callnum = rs.getString("callnum");
               String name = rs.getString("name");
               String ccname = rs.getString("ccname");
-              String manufacture = rs.getString("manufacture");
+              String cname = rs.getString("cname");
               int numcop = rs.getInt("copynum");
               if (already_print == Boolean.FALSE) {
                 System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
               }
-              System.out.println(callnum + "|" + name + "|" + ccname + "|" + manufacture + "|" + numcop + "|");
+              System.out.println(callnum + "|" + name + "|" + ccname + "|" + cname + "|" + numcop + "|");
               already_print = Boolean.TRUE;
             }
             if (already_print) {
