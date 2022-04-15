@@ -168,7 +168,7 @@ class User {
       System.out.printf("Enter the user ID:");
       Scanner obj = new Scanner(System.in);
       String input = obj.nextLine();
-      String sql = "SELECT c.callnum, cpy.copynum, c.name, c.manufacture, r.checkout, r.return_date FROM rent r, car c, copy cpy WHERE r.callnum = c.callnum AND c.callnum = cpy.callnum ORDER BY checkout DSC";
+      String sql = "SELECT c.callnum, cpy.copynum, c.name, c.manufacture, r.checkout, r.return_date FROM rent r, car c, copy cpy WHERE r.callnum = c.callnum AND c.callnum = cpy.callnum ORDER BY checkout DESC";
 
       rs = stmt.executeQuery(sql);
       System.out.println("Call Num|CopyNum|Name|Company|Check-out|Returned?");
