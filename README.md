@@ -1,9 +1,10 @@
 # CSCI 3170 Database Course Project
 
 * Group Number: 25
-* 1155139809 Ekansh Gahlot	
-* 1155135439 Resul Mamiyev	
-* 1155136634 Zhenghao Peng
+* Group Members:
+  * Ekansh Gahlot (SID: 1155139809)	
+  * Resul Mamiyev (SID: 1155135439)	
+  * Zhenghao Peng (SID: 1155136634)
 
 
 ## Compile Instruction
@@ -28,7 +29,7 @@ private String userName = "root";
 private String password = "12345678";
 ```
 
-This parameters specify the location of local mysql server. Before you launching our code,
+These parameters specify the location of local mysql server. Before you launching our code,
 please setup local mysql server via:
 
 ```bash
