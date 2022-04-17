@@ -15,7 +15,13 @@ To compile files, you can use IDE like IntelliJ IDEA to compile the `src/main.ja
 build script:
 
 ```bash
+# Please make sure you are in ./CSCI3170project
 
+# To compile the files
+javac src/*.java -d out 
+
+# To run main program
+java -cp out:my-sql-connector-java-5.1.47.jar main
 ```
 
 ## Setup local mysql server
