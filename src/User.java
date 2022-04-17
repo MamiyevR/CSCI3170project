@@ -3,9 +3,14 @@ import java.util.*;
 
 class User {
   private String jdbcDriver = "com.mysql.jdbc.Driver";
-  private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
-  private String userName = "Group25";
-  private String password = "CSCI3170";
+//  private String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db25";
+//  private String userName = "Group25";
+//  private String password = "CSCI3170";
+
+  // Used for local test
+  private String dbAddress = "jdbc:mysql://localhost:3306/db25";
+  private String userName = "root";
+  private String password = "12345678";
 
   public User() {
   }
