@@ -192,6 +192,36 @@ public class Manager {
                 return;
             }
 
+            // Additional step: Check the user already rent too much car
+            try {
+                sql = "SELECT * From rent r " +
+                        "WHERE r.return_date IS NULL AND r.uid='" + userID + "' ";
+                should_exit = Boolean.FALSE;
+                rs = stmt.executeQuery(sql);
+                rs.last();
+                int num_rent_cars = rs.getRow();
+
+                sql = "SELECT uc.max FROM user_category uc WHERE uc.ucid IN (" +
+                        "SELECT user.ucid FROM user WHERE user.uid='" + userID + "')";
+                rs = stmt.executeQuery(sql);
+                rs.next();
+                int max_num = Integer.parseInt(rs.getString("max"));
+                rs.close();
+
+                if (num_rent_cars >= max_num){
+                    System.out.println("The user " + userID + " already rent " + num_rent_cars + " cars, " +
+                            "exceeding the maximum number of cars " + max_num + " that can be rented!");
+                    should_exit = Boolean.TRUE;
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                should_exit = Boolean.TRUE;
+            }
+            if (should_exit) {
+                return;
+            }
+
             // Step 2: If the car copy is available, it is then borrowed and a new
             // check-out record of the specified car copy and user with NULL
             // return date should be added to the database accordingly.
@@ -205,7 +235,7 @@ public class Manager {
                 // It is possible that the same car is borrowed and returned TODAY! We can't rent it again!
                 System.out.println("The car with user ID: " + userID + ", Call Number: " +
                         callNumber + ", Copy Number: " + copyNumber + " is not available at this time!");
-                return ;
+                return;
             }
 
             // Step 3: Finally, there should be an informative message whether
@@ -334,7 +364,7 @@ public class Manager {
                     String callnum = rs.getString("callnum");
                     double copynum = rs.getInt("copynum");
                     String checkoutdate = rs.getString("checkout");
-                    if (already_print == Boolean.FALSE){
+                    if (already_print == Boolean.FALSE) {
                         System.out.println("|UID|CallNum|CopyNum|Checkout|");
                     }
                     System.out.printf("|%s|%s|%s|%s|%n", uid, callnum, copynum, checkoutdate);
