@@ -169,9 +169,8 @@ public class Manager {
             // with NULL return date).
             ResultSet rs;
 
-            // TODO: To be verified!
             String sql = "SELECT * FROM rent r " +
-                    "WHERE r.return_date IS NULL AND r.uid='" + userID + "' " +
+                    "WHERE r.return_date IS NULL " +
                     "AND r.callnum='" + callNumber + "' " +
                     "AND r.copynum=" + Integer.parseInt(copyNumber);
             Boolean should_exit = Boolean.FALSE;
@@ -179,7 +178,7 @@ public class Manager {
                 rs = stmt.executeQuery(sql);
                 rs.last();
                 if (rs.getRow() == 1) {
-                    System.out.println("The car with user ID: " + userID + ", Call Number: " +
+                    System.out.println("The car Call Number: " +
                             callNumber + ", Copy Number: " + copyNumber + " is not available at this time!");
                     should_exit = Boolean.TRUE;
                 }
